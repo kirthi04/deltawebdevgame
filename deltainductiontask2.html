@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:3px solid black;
+    background-color: #f1f1f1;
+    margin-left: 250px;
+    margin-top: 5px;
+
+}
+body {
+    background-color: rgb(126, 144, 179);
+    border: 3px solid black;
+    background-image: radial-gradient(rgb(59, 53, 53),pink);
+}
+button {
+    color: white;
+    background-color: black;
+}
+</style>
+</head>
+<body onload="startGame()">
+<script>
+
+var stoerpre=[];
+var myGamePiece;
+var myobstyp1=[];
+var myobstyp2=[];
+var myobstyp3=[];
+var myobstyp4=[];
+var colorchange=[];
+var myScore;
+var myMusic;
+function startGame() {
+  alert("Click OK to start the game");
+    myGamePiece = new component(0, 360, "red", 500, 520,5);
+    myScore = new component3("30px", "Consolas", "white", 100, 40, "text");
+    myGameArea.start();
+
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 1000;
+        this.canvas.height = 540;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 15);
+    },
+        clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        var grd = this.context.createLinearGradient(0, 0, 1000, 540);
+grd.addColorStop(0, "black");
+grd.addColorStop(1, "rgb(126, 144, 179)");
+
+        this.context.fillStyle="black";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    upd : function() {
+        this.interval = setInterval(updateGameArea, 15);
+    } ,
+    stopt : function() {
+       clearInterval(this.interval);
+    },
+    stop : function() {
+       
+        var ik= myGameArea.frameNo;
+        localStorage.setItem(ik,"gamess");
+        mynewfunction();
+        clearInterval(this.interval);
+    }
+    }
+function updatefinalGameArea(){
+    myGameArea.clear();
+    myfinalScore = new component3("50px", "Consolas", "white", 200, 200, "text");
+    myfinalScore.text = "YOUR FINAL SCORE IS " + Number(myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length);
+    myfinalScore.update();
+}   
+    function mynewfunction()
+{
+var l, i,j,ks;
+var topscore=[];
+var ans=Number(localStorage.key(0));
+var count=0;
+  for( i=0; i<localStorage.length ;i++)
+{var c=localStorage.key(i);
+  if(localStorage.getItem(c)=="gamess")
+  {topscore[count]=Number(localStorage.key(i));
+  count++;
+  }
+}
+  for( i=0; i<count ; i++)
+  {
+    for(j=0; j<count ; j++)
+    {
+      if((topscore[i]) > (topscore[j]))
+      {
+        ks=topscore[i];
+        topscore[i]=topscore[j];
+        topscore[j]=ks;
+      }
+    }
+  }
+  document.getElementById("highscore").innerHTML="HIGH SCORE: " + topscore[0];
+}
+    function component3(width, height, color, x, y, type) {
+    this.type = type;
+    this.width = width;
+    this.height = height;   
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } }}
+
+        function componentforcolor(starta, enda, color, x, y,radius) {
+    this.starta = starta;
+    this.enda = enda;
+    this.x = x;
+    this.y = y;
+    this.speedY = 0;
+   
+    this.radius=radius; 
+    this.color= color; 
+   this.drawing = function(){
+    this.y = this.y+this.speedY;   
+    ctx = myGameArea.context;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius,(Math.PI/180)* this.starta, (Math.PI/180) * this.enda, true);
+    ctx.closePath();
+    ctx.fillStyle = this.color;
+    ctx.fill();
+   } }
+
+    function component(starta, enda, color, x, y,radius) {
+    this.starta = starta;
+    this.enda = enda;
+    this.x = x;
+    this.y = y;
+    this.speedY = 0;
+    this.acc=0;
+    this.radius=radius; 
+    this.color= color; 
+   this.update = function(){
+    ctx = myGameArea.context;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius,(Math.PI/180)* this.starta, (Math.PI/180) * this.enda, true);
+    ctx.closePath();
+    ctx.fillStyle = this.color;
+    ctx.fill();
+   },
+   this.newPos = function() {
+    this.speedY += this.acc;     
+    this.y += this.speedY;      
+},
+this.crashWith = function(otherobj) {
+               var mytop = this.y-(this.radius);
+        var mybottom = this.y + (this.radius);
+       // var othertop = otherobj.y-(otherobj;
+        var otherbottom1 = otherobj.y + (otherobj.radius2);
+        var otherbottom2 = otherobj.y + (otherobj.radius1);
+        var otherbottom3 = otherobj.y - (otherobj.radius2);
+        var otherbottom4 = otherobj.y - (otherobj.radius1);
+        var crash = false;
+        var angled1 = otherobj.deg3;
+        var angled2 = otherobj.deg2;
+        if((mytop <= otherbottom1) && (mytop >= otherbottom2) ) 
+{if((angled1)>=90 && (angled1)<=270)   
+            { 
+            crash = true;
+               }   }
+       else  if((mytop <= otherbottom4) && (mytop >= otherbottom3) ) 
+{if((angled2)>=90 && (angled2)<=270)   
+            { 
+            crash = true;
+               }   }        
+        return crash;
+    },
+    this.crashWith2 = function(otherobj) {
+               var mytop = this.y-(this.radius);
+        var mybottom = this.y + (this.radius);
+       // var othertop = otherobj.y-(otherobj;
+        var otherbottom1 = otherobj.y + (otherobj.linewidthh) + (otherobj.radius1);
+        var otherbottom2 = otherobj.y + (otherobj.radius1);
+        var otherbottom3 = otherobj.y - (otherobj.linewidthh) - (otherobj.radius1);
+        var otherbottom4 = otherobj.y - (otherobj.radius1);
+        var crash = false;
+        var angled1 = otherobj.deg1;
+        var angled2 = otherobj.deg2;
+        if((mytop <= otherbottom1) && (mytop >= otherbottom2) ) 
+{if((angled1)<=90 || ((angled2)<=210))   
+            { 
+            crash = false;
+               } 
+            else{
+                crash = true;
+            }  }
+       else  if((mytop <= otherbottom4) && (mytop >= otherbottom3) ) 
+{if(((angled1)<=270) && (angled2>=270))   
+            { 
+            crash = false;
+               }
+            else{
+                crash = true;
+            }   }        
+        return crash;
+    },
+    this.crashWith3 = function(otherobj) {
+               var mytop = this.y-(this.radius);
+        var mybottom = this.y + (this.radius);
+       // var othertop = otherobj.y-(otherobj;
+        var otherbottom1 = otherobj.y + (otherobj.linewidthh) + (otherobj.radius1);
+        var otherbottom2 = otherobj.y + (otherobj.radius1);
+        var otherbottom3 = otherobj.y - (otherobj.linewidthh) - (otherobj.radius1);
+        var otherbottom4 = otherobj.y - (otherobj.radius1);
+        var crash = false;
+        var angled1 = otherobj.deg1;
+        var angled2 = otherobj.deg2;
+        if((mytop <= otherbottom1) && (mytop >= otherbottom2) ) 
+{if((angled1)<=90)   
+            { 
+            crash = false;
+               } 
+            else{
+                crash = true;
+            }  }
+       else  if((mytop <= otherbottom4) && (mytop >= otherbottom3) ) 
+{if((angled2)>=270 )   
+            { 
+            crash = false;
+               }
+            else{
+                crash = true;
+            }   }        
+        return crash;
+    },
+    this.crashWith4 = function(otherobj) {
+            var distancee = (((this.x)-(otherobj.x-otherobj.radius1))*((this.x)-(otherobj.x-otherobj.radius1)))+(((this.y)-(otherobj.y))*((this.y)-(otherobj.y)));
+       var raddis = (this.radius + otherobj.radius1)*(this.radius + otherobj.radius1);
+            var crash = false;
+       // var angled1 = otherobj.deg1;
+      var actraddis = (this.radius + otherobj.radius1);
+        if( (distancee<=raddis) && (this.y>otherobj.y)) 
+{
+    var preangle = (otherobj.radius1)/actraddis;
+    var anglefind = Math.acos(preangle);
+    var compangle = otherobj.deg2*(Math.PI/180);
+    if((compangle >= anglefind) && (compangle <= (Math.PI/2)))   
+            { 
+            crash = false;
+               } 
+            else{
+                crash = true;
+            }  }
+else if((distancee<=raddis) && (this.y==otherobj.y)){
+    var companglee = otherobj.deg2*(Math.PI/180);
+    if((companglee>=0) && (companglee<= (Math.PI/2))){
+crash = false;
+    }
+    else{
+        crash =true;
+    }
+}     
+            else  if( (distancee<=raddis) && (this.y<otherobj.y)) 
+{ var preangle2 = (otherobj.radius1)/actraddis;
+    var anglefind2 = Math.acos(preangle2);
+    var compangle2 = otherobj.deg1*(Math.PI/180);
+    var compangle23 = otherobj.deg2*(Math.PI/180);
+    var newangle2 = 2*(Math.PI) - anglefind2;
+    if((compangle2 <= newangle2 ) && (compangle23 >= 0 ))  
+            { 
+            crash = false;
+               } 
+            else{
+                crash = true;
+            }  }
+            return crash;   } ,
+    this.changewith = function(otherobj){
+      if((this.y <= otherobj.y) && (this.x <= otherobj.x)){
+          this.color = otherobj.color;
+      }
+    }        
+}
+function obstacle1(typee,x,y,radius1,radius2,color1,color2,deg1,deg2,deg3,speeds) {
+  this.x= x;
+  this.y= y;
+   this.radius1=radius1;
+ this.radius2= radius2;
+ this.color1=color1;
+  this.color2=color2;
+  this.deg1= deg1;
+  this.deg2= deg2;
+ this.deg3= deg3;
+ this.speeds=speeds;
+ this.typee = typee
+ this.drawing= function() {
+    this.y = this.y+this.speeds;
+    ctx = myGameArea.context;
+    ctx.lineWidth =  1;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius1, this.deg1*(Math.PI/180), this.deg2*(Math.PI/180));
+  ctx.arc(this.x, this.y, this.radius2, this.deg1*(Math.PI/180), this.deg2*(Math.PI/180));
+    ctx.closePath();
+    ctx.fillStyle = this.color1; 
+    ctx.fill('evenodd');
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius1, this.deg2*(Math.PI/180), this.deg3*(Math.PI/180));
+  ctx.arc(this.x, this.y, this.radius2, this.deg2*(Math.PI/180), this.deg3*(Math.PI/180));
+    ctx.closePath();
+    ctx.fillStyle = this.color2; 
+    ctx.fill('evenodd');
+   }
+this.rot= function(rotspeed)
+{
+    if(this.deg1>=360)
+    {
+        this.deg1=0;
+    }
+    if(this.deg2>=360)
+    {
+        this.deg2=0;
+    }
+    if(this.deg3>=360)
+    {
+        this.deg3=0;
+    }
+    this.deg1 += rotspeed;
+    this.deg2 += rotspeed;
+    this.deg3 += rotspeed;
+}
+}
+function obstacle2(typee,x,y,radius1,linewidth,color1,color2,color3,deg1,deg2,deg3,deg4,speeds) {
+  this.x= x;
+  this.y= y;
+   this.radius1=radius1;
+ this.linewidthh= linewidth;
+ this.color1=color1;
+  this.color2=color2;
+  this.color3=color3;
+  this.deg1= deg1;
+  this.deg2= deg2;
+ this.deg3= deg3;
+ this.deg4= deg4;
+ this.speeds=speeds;
+ this.typee = typee;
+ this.drawing= function() {
+    this.y = this.y+this.speeds;
+    ctx = myGameArea.context;
+    ctx.beginPath();
+ ctx.lineWidth =  this.linewidthh
+ ctx.arc(this.x, this.y, this.radius1,this.deg1*(Math.PI/180), this.deg2*(Math.PI/180));
+    ctx.strokeStyle = this.color1; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius1,this.deg2*(Math.PI/180), this.deg3*(Math.PI/180));
+  ctx.strokeStyle = this.color2;
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius1,this.deg3*(Math.PI/180), this.deg4*(Math.PI/180));
+  ctx.strokeStyle = this.color3; 
+    ctx.stroke();
+    ctx.closePath();
+   }
+this.rot= function(rotspeed)
+{
+    if(this.deg1>=360)
+    {
+        this.deg1=0;
+    }
+    if(this.deg2>=360)
+    {
+        this.deg2=0;
+    }
+    if(this.deg3>=360)
+    {
+        this.deg3=0;
+    }
+    if(this.deg4>=360)
+    {
+        this.deg4=0;
+    }
+    this.deg1 += rotspeed;
+    this.deg2 += rotspeed;
+    this.deg3 += rotspeed;
+    this.deg4 += rotspeed;
+}
+}
+function obstacle3(typee,x,y,radius1,linewidth,color1,color2,color3,deg1,deg2,deg3,deg4,deg5,speeds) {
+  this.x= x;
+  this.y= y;
+   this.radius1=radius1;
+ this.linewidthh= linewidth;
+ this.color1=color1;
+  this.color2=color2;
+  this.color3=color3;
+  this.deg1= deg1;
+  this.deg2= deg2;
+ this.deg3= deg3;
+ this.deg4= deg4;
+ this.deg5= deg5;
+ this.speeds=speeds;
+ this.typee = typee;
+ this.drawing= function() {
+    this.y = this.y+this.speeds;
+    ctx = myGameArea.context;
+    ctx.beginPath();
+ ctx.lineWidth =  this.linewidthh;
+ ctx.arc(this.x, this.y, this.radius1,this.deg1*(Math.PI/180), this.deg2*(Math.PI/180));
+    ctx.strokeStyle = this.color1; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius1,this.deg2*(Math.PI/180), this.deg3*(Math.PI/180));
+  ctx.strokeStyle = this.color2;
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius1,this.deg3*(Math.PI/180), this.deg4*(Math.PI/180));
+  ctx.strokeStyle = this.color3; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x, this.y, this.radius1,this.deg4*(Math.PI/180), this.deg5*(Math.PI/180));
+  ctx.strokeStyle = "white"; 
+    ctx.stroke();
+    ctx.closePath();
+   }
+this.rot= function(rotspeed)
+{
+    if(this.deg1>=360)
+    {
+        this.deg1=0;
+    }
+    if(this.deg2>=360)
+    {
+        this.deg2=0;
+    }
+    if(this.deg3>=360)
+    {
+        this.deg3=0;
+    }
+    if(this.deg4>=360)
+    {
+        this.deg4=0;
+    }
+    if(this.deg5>=360)
+    {
+        this.deg5=0;
+    }
+    this.deg1 += rotspeed;
+    this.deg2 += rotspeed;
+    this.deg3 += rotspeed;
+    this.deg4 += rotspeed;
+    this.deg5 += rotspeed;
+}
+}
+function obstacle4(typee,x,y,radius1,color1,color2,color3,deg1,deg2,deg3,deg4,deg5,speeds) {
+  this.x= x;
+  this.y= y;
+   this.radius1=radius1;
+ this.color1=color1;
+  this.color2=color2;
+  this.color3=color3;
+  this.deg1= deg1;
+  this.deg2= deg2;
+ this.deg3= deg3;
+ this.deg4= deg4;
+ this.deg5= deg5;
+ this.speeds=speeds;
+ this.typee = typee;
+ this.odeg1= deg1;
+  this.odeg2= deg2;
+ this.odeg3= deg3;
+ this.odeg4= deg4;
+ this.odeg5= deg5;
+ this.drawing= function() {
+    this.y = this.y+this.speeds;
+    ctx = myGameArea.context;
+    ctx.lineWidth =  2;
+    ctx.beginPath();
+ ctx.arc(this.x-this.radius1, this.y, this.radius1,this.deg1*(Math.PI/180), this.deg2*(Math.PI/180));
+    ctx.strokeStyle = this.color1; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1, this.y, this.radius1,this.deg2*(Math.PI/180), this.deg3*(Math.PI/180));
+  ctx.strokeStyle = this.color2;
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1, this.y, this.radius1,this.deg3*(Math.PI/180), this.deg4*(Math.PI/180));
+  ctx.strokeStyle = this.color3; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1, this.y, this.radius1,this.deg4*(Math.PI/180), this.deg5*(Math.PI/180));
+  ctx.strokeStyle = "white"; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    var m = 2*(this.radius1);
+ ctx.arc(this.x-this.radius1 + m, this.y, this.radius1,this.odeg1*(Math.PI/180), this.odeg2*(Math.PI/180));
+    ctx.strokeStyle = "white"; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1 + m, this.y, this.radius1,this.odeg2*(Math.PI/180), this.odeg3*(Math.PI/180));
+  ctx.strokeStyle = this.color3;
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1 + m, this.y, this.radius1,this.odeg3*(Math.PI/180), this.odeg4*(Math.PI/180));
+  ctx.strokeStyle = this.color2; 
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+  ctx.arc(this.x-this.radius1 + m, this.y, this.radius1,this.odeg4*(Math.PI/180), this.odeg5*(Math.PI/180));
+  ctx.strokeStyle = this.color1; 
+    ctx.stroke();
+    ctx.closePath();
+   }
+this.rot= function(rotspeed)
+{
+    if(this.deg1>=360)
+    {
+        this.deg1=0;
+    }
+    if(this.deg2>=360)
+    {
+        this.deg2=0;
+    }
+    if(this.deg3>=360)
+    {
+        this.deg3=0;
+    }
+    if(this.deg4>=360)
+    {
+        this.deg4=0;
+    }
+    if(this.deg5>=360)
+    {
+        this.deg5=0;
+    }
+    this.deg1 += rotspeed;
+    this.deg2 += rotspeed;
+    this.deg3 += rotspeed;
+    this.deg4 += rotspeed;
+    this.deg5 += rotspeed;
+
+if(this.odeg1<=0)
+    {
+        this.odeg1=360;
+    }
+    if(this.odeg2<=0)
+    {
+        this.odeg2=360;
+    }
+    if(this.odeg3<=0)
+    {
+        this.odeg3=360;
+    }
+    if(this.odeg4<=0)
+    {
+        this.odeg4=360;
+    }
+    if(this.odeg5<=0)
+    {
+        this.odeg5=360;
+    }
+    this.odeg1 -= rotspeed;
+    this.odeg2 -= rotspeed;
+    this.odeg3 -= rotspeed;
+    this.odeg4 -= rotspeed;
+    this.odeg5 -= rotspeed;
+}
+}
+function updateGameArea() {
+   var x,y;
+   for(var i=0; i<(myobstyp1.length); i++){
+    if (myGamePiece.crashWith(myobstyp1[i]) || myGamePiece.y>530) {
+       
+       myGamePiece.enda = 0;
+       myGamePiece.update();
+        myGamePiece.newPos();    
+     myGameArea.stop();
+     updatefinalGameArea();
+        return;
+    } } 
+    for(var i=0; i<(myobstyp2.length); i++){
+    if (myGamePiece.crashWith2(myobstyp2[i]) || myGamePiece.y>530) {
+       
+       myGamePiece.enda = 0;
+       myGamePiece.update();
+        myGamePiece.newPos();    
+     myGameArea.stop();
+     updatefinalGameArea();
+        return;
+    } } 
+    for(var i=0; i<(myobstyp3.length); i++){
+    if (myGamePiece.crashWith3(myobstyp3[i]) || myGamePiece.y>530) {
+       
+       myGamePiece.enda = 0;
+       myGamePiece.update();
+        myGamePiece.newPos();    
+     myGameArea.stop();
+     updatefinalGameArea();
+        return;
+    } } 
+    for(var i=0; i<(myobstyp4.length); i++){
+    if (myGamePiece.crashWith4(myobstyp4[i]) || myGamePiece.y>530) {
+       
+       myGamePiece.enda = 0;
+       myGamePiece.update();
+        myGamePiece.newPos();    
+     myGameArea.stop();
+     updatefinalGameArea();
+        return;
+    } } 
+    for(var j=0; j<(colorchange.length) ; j++){
+myGamePiece.changewith(colorchange[j]);
+    } 
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if(myGameArea.frameNo==1){
+      myobstyp1.push(new obstacle1(1,500,250,35,45,"red","blue",90,270,90,0));
+      stoerpre.push(new obstacle1(1,500,250,35,45,"red","blue",90,270,90,0));
+    }
+    if((stoerpre[stoerpre.length-1].typee) == 1)
+  { if((myobstyp1[myobstyp1.length-1].y > 200) && ((myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length)>colorchange.length)){
+     var colors = ['indigo', 'yellowgreen',  
+                'gold', 'crimson', 'lime' 
+            ]; 
+            var random_color = colors[Math.floor( 
+                    Math.random() * colors.length)];
+        colorchange.push(new  componentforcolor(0,360,random_color,500,50,10));}
+        if((myobstyp1[myobstyp1.length-1].y) > 300)  
+    {
+    var chooserand = [Math.floor(Math.random() * 4)];
+    if(chooserand==0){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var    radiui= 40 + Math.floor(Math.random() * 20);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];         
+        myobstyp1.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));
+        stoerpre.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));  }
+    else if(chooserand==1){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7);  
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+       var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp2.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0));
+    stoerpre.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0)); }
+    else if(chooserand==2){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp3.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }  
+    else if(chooserand==3){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp4.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }
+    }
+        }
+    if((stoerpre[stoerpre.length-1].typee) == 2)
+  { if((myobstyp2[myobstyp2.length-1].y > 200) && ((myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length)>colorchange.length)){
+     var colors = [  'indigo', 'yellowgreen', 
+                'gold', 'crimson', 'lime' 
+            ]; 
+            var random_color = colors[Math.floor( 
+                    Math.random() * colors.length)];
+        colorchange.push(new  componentforcolor(0,360,random_color,500,50,10));}
+        if((myobstyp2[myobstyp2.length-1].y) > 300)  
+    {
+    var chooserand = [Math.floor(Math.random() * 4)];
+    if(chooserand==0){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var    radiui= 40 + Math.floor(Math.random() * 20);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];         
+        myobstyp1.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));
+        stoerpre.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));  }
+    else if(chooserand==1){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp2.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0));
+    stoerpre.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0)); }
+    else if(chooserand==2){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp3.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }  
+    else if(chooserand==3){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp4.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }
+    }      }
+    if((stoerpre[stoerpre.length-1].typee) == 3)
+  { if((myobstyp3[myobstyp3.length-1].y > 200) && ((myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length)>colorchange.length)){
+     var colors = [  'indigo', 'yellowgreen',  
+                'gold', 'crimson', 'lime' 
+            ]; 
+            var random_color = colors[Math.floor( 
+                    Math.random() * colors.length)];
+        colorchange.push(new  componentforcolor(0,360,random_color,500,50,10));}
+        if((myobstyp3[myobstyp3.length-1].y) > 300)  
+    {
+    var chooserand = [Math.floor(Math.random() * 4)];
+    if(chooserand==0){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var    radiui= 40 + Math.floor(Math.random() * 20);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];         
+        myobstyp1.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));
+        stoerpre.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));  }
+    else if(chooserand==1){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp2.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0));
+    stoerpre.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0)); }
+    else if(chooserand==2){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp3.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }  
+    else if(chooserand==3){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+       
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp4.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }
+    }        }    
+    if((stoerpre[stoerpre.length-1].typee) == 4)
+  { if((myobstyp4[myobstyp4.length-1].y > 200) && ((myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length)>colorchange.length)){
+     var colors = [ 'indigo', 'yellowgreen', 
+                'gold', 'crimson', 'lime'
+            ]; 
+            var random_color = colors[Math.floor( 
+                    Math.random() * colors.length)];
+        colorchange.push(new  componentforcolor(0,360,random_color,500,50,10));}
+        if((myobstyp4[myobstyp4.length-1].y) > 300)  
+    {
+    var chooserand = [Math.floor(Math.random() * 4)];
+    if(chooserand==0){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var    radiui= 40 + Math.floor(Math.random() * 20);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];         
+        myobstyp1.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));
+        stoerpre.push(new obstacle1(1,500,-50,40,radiui,actualcolor1,obscolor2,90,270,90,0));  }
+    else if(chooserand==1){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+                 
+    myobstyp2.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0));
+    stoerpre.push(new obstacle2(2,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,210,330,90,0)); }
+    else if(chooserand==2){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var  linewidth= 5 + Math.floor(Math.random() * 7); 
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)]; 
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp3.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle3(3,500,-50,radiui,linewidth,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }  
+    else if(chooserand==3){
+        var actualcolor1 = colorchange[colorchange.length-1].color;
+        var colors = [  'red', 'blue', 'yellow', 'green', 'orange' ];
+        var  radiui= 45 + Math.floor(Math.random() * 10);
+        var obscolor2 =  colors[Math.floor(Math.random() * colors.length)];
+        var obscolor3 =  colors[Math.floor(Math.random() * colors.length)];         
+    myobstyp4.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0));
+    stoerpre.push(new obstacle4(4,500,-50,radiui,actualcolor1,obscolor2,"wheat",90,180,270,360,90,0)); }
+    }        }       
+ for(i=0; i<(myobstyp1.length) ;i++)
+    {if(myGamePiece.speedY>-0.5){
+myobstyp1[i].speeds=0;
+    } myobstyp1[i].drawing();
+   myobstyp1[i].rot( 1 + Math.floor((myGameArea.frameNo)/2000));
+   }
+for(i=0; i<(myobstyp2.length) ;i++)
+    {if(myGamePiece.speedY>-0.5){
+myobstyp2[i].speeds=0;
+    } myobstyp2[i].drawing();
+   myobstyp2[i].rot( 1 + Math.floor((myGameArea.frameNo)/2000));
+   }
+for(i=0; i<(myobstyp3.length) ;i++)
+    {if(myGamePiece.speedY>-0.5){
+myobstyp3[i].speeds=0;
+    } myobstyp3[i].drawing();
+   myobstyp3[i].rot( 1 + Math.floor((myGameArea.frameNo)/2000));
+   }
+for(i=0; i<(myobstyp4.length) ;i++)
+    {if(myGamePiece.speedY>-0.5){
+myobstyp4[i].speeds=0;
+    } myobstyp4[i].drawing();
+   myobstyp4[i].rot( 1 + Math.floor((myGameArea.frameNo)/2000));
+   }   
+for(i=0; i<(colorchange.length) ;i++)
+    {if(myGamePiece.speedY>-0.5){
+colorchange[i].speedY=0;
+    }
+ colorchange[i].drawing();  
+}
+    myScore.text="SCORE: " + Number(myobstyp1.length + myobstyp2.length + myobstyp3.length + myobstyp4.length);
+    myScore.update();
+   myGamePiece.newPos();    
+    myGamePiece.update();
+    
+    }
+    function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+function moveup() {
+    var audii = document.querySelector('audio');
+    audii.play();
+    myGamePiece.speedY = -2; 
+    myGamePiece.acc = 0.05; 
+  if(myGamePiece.y<480){  for(i=0; i<(myobstyp1.length) ;i++)
+    {
+       myobstyp1[i].speeds = 1 +0.5*(Math.floor((myGameArea.frameNo)/2000));
+    }
+for(i=0; i<(myobstyp2.length) ;i++)
+    {
+       myobstyp2[i].speeds = 1 + 0.5*(Math.floor((myGameArea.frameNo)/2000));
+    }
+for(i=0; i<(myobstyp3.length) ;i++)
+    {
+       myobstyp3[i].speeds = 1 + 0.5*(Math.floor((myGameArea.frameNo)/2000));
+    } 
+for(i=0; i<(myobstyp4.length) ;i++)
+    {
+       myobstyp4[i].speeds = 1 + 0.5*(Math.floor((myGameArea.frameNo)/2000));
+    }               
+    }
+    if(myGamePiece.y<480){  for(i=0; i<(colorchange.length) ;i++)
+    {
+       colorchange[i].speedY = 1 + 0.5*(Math.floor((myGameArea.frameNo)/2000));
+    }
+       
+    }}
+</script>
+<div> <button onclick="moveup()">UP</button><br><br>
+    <button onclick="myGameArea.upd()">RESUME</button>
+    <button onclick="myGameArea.stop()">PAUSE</button>   
+</div>
+<p id="highscore">HIGH SCORE</p>
+<audio>
+    <source src="sample3.mp3" type="audio/mpeg">
+  </audio>
+</body>
+</html>
